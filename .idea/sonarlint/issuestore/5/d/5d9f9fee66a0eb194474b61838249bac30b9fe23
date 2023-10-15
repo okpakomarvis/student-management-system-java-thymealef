@@ -1,0 +1,19 @@
+
+x
+java:S3305"]Inject this field value directly into "authenticationProvider", the only method that uses it.(¶òÁÈùÿÿÿÿ
+p
+java:S3305"ZInject this field value directly into "securityFilterChain", the only method that uses it.(Å‹þ´
+L
+java:S1611""6Remove the parentheses around the "requests" parameter(¢ÌÀÈ
+H
+java:S1611)"2Remove the parentheses around the "form" parameter(â¦¿Ž
+O
+java:S1611/"4Remove the parentheses around the "logout" parameter(…ÿè®øÿÿÿÿ
+c
+java:S1612/"HReplace this lambda with method reference 'LogoutConfigurer::permitAll'.(…ÿè®øÿÿÿÿ
+L
+java:S16116"1Remove the parentheses around the "web" parameter(½ø´äúÿÿÿÿ
+x
+java:S1128"]Remove this unused import 'org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder'.(åÅÚ…ûÿÿÿÿ
+t
+java:S1128"YRemove this unused import 'org.springframework.security.crypto.password.PasswordEncoder'.(‰¡ßáÿÿÿÿÿ

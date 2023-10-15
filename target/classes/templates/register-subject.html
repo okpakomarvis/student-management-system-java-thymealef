@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: head_simple" />
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav th:replace="fragments :: nav_body_head" />
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="fragments :: aside_head" />
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Course</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">Course Registration</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row ml-2 mr-2">
+          <div class="row">
+            <div class="col-sm-8">
+                <div class="form-group">
+                  <label>Select Year</label>
+                  <select th:name="year" class="form-select form-control" aria-label=".Default select example" id="year">
+                    <option selected>......</option>
+                    <option th:each="tempYear : ${academicYear}"  th:value="${tempYear.acdemicYear}" th:text="${tempYear.acdemicYear}" ></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Select Semester</label>
+                  <select th:name="semester" class="form-select form-control" aria-label=".Default select example" id="semester" disabled>
+                    <option selected>......</option>
+                    <option th:each="tempSemester : ${semester}"  th:value="${tempSemester}" th:text="${tempSemester}" ></option>
+                  </select>
+                </div>
+
+              <script>
+
+              </script>
+            </div>
+
+          </div>
+          <form role="form" th:action="@{/student/processDataCourse}" method="POST" >
+        <table class="table table-hover">
+          <thead>
+          <tr class="table-primary">
+            <th scope="col">#</th>
+            <th scope="col">Subject Name</th>
+            <th scope="col">Subject Code</th>
+            <th scope="col">Credit Unit</th>
+            <th scope="col">Semester</th>
+            <th scope="col">Check Subject</th>
+          </tr>
+          </thead>
+          <tbody id="tbodyResponse">
+
+          </tbody>
+        </table><!-- /.row -->
+            <div class="col-ms-8 float-right">
+              <button type="submit" style="display:none;" id="submit-register" class="btn btn-danger">Register</button>
+            </div>
+          </form>
+      </div>
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer th:replace="fragments :: main_footer"/>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/js/jquery/jquery.min.js}"></script>
+
+<script>
+  $("#year").bind("change", function(){
+   const year = $(this).val();
+   ajaxPost(year, "year");
+});
+$("#semester").bind("change", function(){
+   const semester = $(this).val();
+   ajaxPost(semester, "semester");
+});
+let formData = {
+			 year : "",
+			semester : ""
+		}
+function ajaxPost(data, dataType) {
+
+  if(data == ""){
+    $("#semester").prop('disabled', 'disabled');
+  }else{
+  $("#semester").prop('disabled', false);
+  }
+  // PREPARE FORM DATA
+  //const dataForm =[];
+
+  let dataYear="";
+  let dataSemester="";
+  if(dataType == "year"){
+     formData.year =data;
+  }else{
+    formData.semester = data;
+  }
+
+
+  // checked if both property are selected
+	if((formData.year !== "") && (formData.semester !== "") ){
+	  //make ajax call
+	  //const dataFormat=JSON.stringify(formData);
+	  $.ajax({
+          type : "GET",
+		  contentType : "application/json",
+		  url : window.location.origin + "/student/processDataGet?year="+formData.year+"&semester="+formData.semester,
+		  dataType : 'json',
+		  success : function(result) {
+		  if (result.status == "success") {
+							$('#tbodyResponse tr').empty();
+							//var custList = "";
+							$.each(result.object, function(i, subject) {
+								var output=`<tr>
+                                <th scope="row" th:text="${i+1}">${i+1}</th>
+                                <td th:text="${subject.subjectName}">${subject.subjectName}</td>
+                                 <td th:text="${subject.subjectCode}">${subject.subjectCode}</td>
+                                 <td th:text="${subject.creditUnit}">${subject.creditUnit}</td>
+
+                                 <td th:text="${subject.semester}">${subject.semester}</td>
+                                 <td ><input type="checkbox" name="courses" checked="${subject}" value="${subject.id}" /></td>
+                                </tr>`;
+								$('#tbodyResponse').append(output)
+							});
+							$("#submit-register").css("display","block")
+							console.log("Success: ", result);
+						} else {
+							//$("#getResultDiv").html("<strong>Error</strong>");
+							console.log("Fail: ", result);
+						}
+		  },
+		  error : function(e) {
+			alert("Error!")
+			console.log("ERROR: ", e);
+			}
+	  });
+
+	}
+
+}
+
+
+</script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/js/adminlte.min.js}"></script>
+</body>
+</html>

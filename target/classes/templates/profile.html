@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head th:replace="fragments :: head_simple" />
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+  <!-- Navbar -->
+  <nav th:replace="fragments :: nav_body_head" />
+  <!-- /.navbar -->
+
+  <!-- Main Sidebar Container -->
+  <aside th:replace="fragments :: aside_head" />
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Profile</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item active">User Profile</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3">
+
+            <!-- Profile Image -->
+            <div class="card card-primary card-outline">
+              <div class="card-body box-profile">
+                <div class="text-center">
+                  <img  class="profile-user-img img-fluid img-circle"
+                       th:src="@{${image}}"
+                       alt="User profile picture">
+                </div>
+
+                <h3 class="profile-username text-center" th:text="${student.firstName + ' ' + student.lastName }" />
+
+                <p class="text-muted text-center" th:text="${student.course.courseName}"></p>
+
+                <ul class="list-group list-group-unbordered mb-3">
+                  <li class="list-group-item" >
+                    <b>Matric No</b> <a class="float-right" th:text="${student.matricNo}" ></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>UserName </b> <a class="float-right" th:text="${student.userDetails.userName}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Code </b> <a class="float-right" th:text="${student.course.courseCode}"></a>
+                  </li>
+                  <li class="list-group-item">
+                    <b>Role </b> <span th:each="tempRole : ${student.userDetails.roles}">
+                    <a class="float-right" th:text="${tempRole.name}"></a>
+                  </span>
+
+                  </li>
+                </ul>
+
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+
+            <!-- About Me Box -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">About Me</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <strong><i class="fas fa-book mr-1"></i> Address</strong>
+
+                <p class="text-muted" th:text="${student.address}" />
+
+                <hr>
+
+                <strong><i class="fas fa-map-marker-alt mr-1"></i> Email</strong>
+
+                <p class="text-muted" th:text="${student.email}" />
+
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+          <!-- /.col -->
+          <div class="col-md-9">
+            <div class="card">
+             <!-- /.card-header -->
+              <div class="card-body">
+                <div class="tab-content">
+                  <!-- /.tab-pane -->
+                  <!-- /.tab-pane -->
+                  <div class="card-header mb-3">
+                    <h3 class="card-title">Update Profile</h3>
+                  </div>
+
+                  <div>
+                    <form class="form-horizontal" th:action="@{/student/processStudentDetails}"
+                          th:object="${student}" method="POST" enctype="multipart/form-data">
+                      <div th:if="${message}">
+                        <h2 th:text="${message}" class="btn-success"/>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputName" class="col-sm-2 col-form-label">First Name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" id="inputName" th:field="*{firstName}" placeholder="Enter First Name...">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputName2" class="col-sm-2 col-form-label">Last Name</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" id="inputName2"   th:field="*{lastName}" placeholder="Enter Last Name...">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                          <input type="email" class="form-control" id="inputEmail" th:field="*{email}"  placeholder="Enter email">
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label for="inputfile" class="col-sm-2 col-form-label">Profile Photo</label>
+                        <div class="col-sm-10">
+                          <input type="file"  id="inputfile" name="file" accept="image/png, image/jpeg" >
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputName3" class="col-sm-2 col-form-label">Matriculation Number</label>
+                        <div class="col-sm-10">
+                          <input type="text"  th:field="*{matricNo}" id="inputName3" class="form-control" placeholder="Enter Matric No...">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="inputName4" class="col-sm-2 col-form-label">Select Course</label>
+                        <div class="col-sm-10">
+                          <select th:name="course" class="form-select form-control" aria-label=".Default select example">
+                            <option selected >......</option>
+                            <option th:each="tempCourse : ${courses}" id="inputName4" th:selected="${tempCourse.courseName == student.course.courseName}"  th:value="${tempCourse.id}" th:text="${tempCourse.courseName}" ></option>
+
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label for="inputExperience" class="col-sm-2 col-form-label">Address</label>
+                        <div class="col-sm-10">
+                          <textarea class="form-control" rows="3" id="inputExperience"  th:field="*{address}" placeholder="Enter your Address..."></textarea>
+                        </div>
+                      </div>
+                      <!-- add an hidden form field for update -->
+                      <input type="hidden" th:field="*{Id}" />
+                      <div class="form-group row">
+                        <div class="offset-sm-2 col-sm-10">
+                          <button type="submit" class="btn btn-danger">Save</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- /.tab-pane -->
+                </div>
+                <!-- /.tab-content -->
+              </div><!-- /.card-body -->
+            </div>
+            <!-- /.nav-tabs-custom -->
+          </div>
+          <!-- /.col -->
+        </div>
+        <!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <footer th:replace="fragments :: main_footer"/>
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script th:src="@{/js/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/js/bootstrap/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/js/adminlte.min.js}"></script>
+</body>
+</html>
